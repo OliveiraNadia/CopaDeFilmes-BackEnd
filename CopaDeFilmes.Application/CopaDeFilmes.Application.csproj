@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="ViewModel\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\CopaDeFilmes.Domain\CopaDeFilmes.Domain.csproj" />
+    <ProjectReference Include="..\CopaDeFilmes.Infra\CopaDeFilmes.Infra.csproj" />
+    <ProjectReference Include="..\CopaDeFilmes\CopaDeFilmes.Api.csproj" />
+  </ItemGroup>
+
+</Project>
