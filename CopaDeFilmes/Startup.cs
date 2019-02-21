@@ -1,20 +1,17 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using CopaDeFilmes.Domain.Interfaces.Repository;
-using CopaDeFilmes.Domain.Interfaces.Services;
-using CopaDeFilmes.Infra.Repository;
-using CopaDeFilmes.Domain.Services;
+﻿using CopaDeFilmes.AutoMapper;
+using AutoMapper;
+using CopaDeFilmes.Interfaces.Service;
+using CopaDeFilmes.Interfaces_Domain;
+using CopaDeFilmes.Repository;
+using CopaDeFilmes.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
-using Swashbuckle.AspNetCore.Swagger;
+using System;
 
-namespace CopaDoMundoFilmes.WebAPI
+namespace CopaDeFilmes
 {
     public class Startup
     {
@@ -25,49 +22,33 @@ namespace CopaDoMundoFilmes.WebAPI
 
         public IConfiguration Configuration { get; }
 
+        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddCors();
-            services.AddMvc();
+            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_1);
 
-            //services.AddSwaggerGen(c =>
-            //{
-            //    c.SwaggerDoc("v1",
-            //        new Info
-            //        {
-            //            Title = "Copa do Mundo Filmes API",
-            //            Version = "v1",
-            //            Description = "API utilizada para identificar campeão e vice campeão entre uma lista de filmes"
-            //        });
-            //});
+            services.AddScoped<ICampeonatoApplicationService, CampeonatoFilmesService>();
+            services.AddScoped<ICampeonatoService, FilmeRepository>();
+            services.AddAutoMapper();
+            AutoMapperConfig.RegisterMappings();
 
-            ////Singleton pois não preciso variar o objeto.
-            //services.AddSingleton<IFilmeRepository, FilmeRepository>();
-            //services.AddSingleton<ICampeonatoService, CampeonatoService>();
+
         }
 
+        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
+            else
+            {
+                app.UseHsts();
+            }
 
-            app.UseCors(builder => builder
-                .AllowAnyOrigin()
-                .AllowAnyMethod()
-                .AllowAnyHeader()
-                .AllowCredentials());
-
+            app.UseHttpsRedirection();
             app.UseMvc();
-
-            //app.UseSwagger();
-
-            //app.UseSwaggerUI(c =>
-            //{
-            //    c.SwaggerEndpoint("/swagger/v1/swagger.json",
-            //        "Copa do Mundo Filmes API");
-            //});
         }
     }
 }

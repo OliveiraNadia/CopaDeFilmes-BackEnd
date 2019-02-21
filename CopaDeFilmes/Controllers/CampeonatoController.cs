@@ -1,32 +1,61 @@
-﻿using CopaDeFilmes.Domain.Interfaces.Services;
-using CopaDeFilmes.Domain.Models;
-using Microsoft.AspNetCore.Mvc;
-using System;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
+using CopaDeFilmes.Interfaces.Repository;
+using CopaDeFilmes.Interfaces.Service;
+using CopaDeFilmes.Interfaces_Domain;
+using CopaDeFilmes.Models;
+using CopaDeFilmes.ViewModel;
+using Microsoft.AspNetCore.Mvc;
 
 namespace CopaDeFilmes.Controllers
 {
-    public class CampeonatoController : Controller
+    [Route("api/[controller]")]
+    [ApiController]
+    public class CampeonatoController : ControllerBase
     {
-        private readonly ICampeonatoService _campeonatoService;
-        public CampeonatoController(ICampeonatoService campeonatoService)
+        private readonly ICampeonatoApplicationService _campeonatoApllicationService;
+        public CampeonatoController(ICampeonatoApplicationService campeonatoService)
         {
-            _campeonatoService = campeonatoService;
+            _campeonatoApllicationService = campeonatoService;
+
         }
 
-        [HttpPost]
-        public async ValueTask<IActionResult> GerarCampeonato([FromBody]string[] Idfilmes)
+        [HttpGet]
+        [Route("filmes")]
+        public async Task<ActionResult> GetFilmes()
         {
             try
             {
-                Campeonato campeonato = await _campeonatoService.GerarCampeonato(Idfilmes);
+                var filmes = await _campeonatoApllicationService.GetFilmes();
 
-                return Ok(campeonato);
+                return Ok(filmes);
             }
             catch (Exception ex)
             {
+
+                return BadRequest(ex.Message);
+            }
+        }
+
+
+        [HttpPost]
+        public async Task<ActionResult>GerarCampeonato([FromBody]IEnumerable<FilmeViewModel> filmes)
+        {
+            try
+            {
+                var resultado = _campeonatoApllicationService.GerarCampeonato(filmes);
+
+                return Ok(filmes);
+            }
+            catch (Exception ex)
+            {
+
                 return StatusCode(500, ex);
             }
         }
+
+     
     }
 }
